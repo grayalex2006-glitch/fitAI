@@ -11,32 +11,39 @@
     .wrap { max-width: 1200px; margin: 0 auto; padding: 24px; }
     header.app { background: linear-gradient(135deg,#667eea,#764ba2); color:#fff; border-radius:16px; padding:24px; margin:16px 0 24px; }
     .brand { display:flex; align-items:center; gap:12px; font-weight:800; font-size:28px; }
-    nav.top { margin-top:16px; display:flex; flex-wrap:wrap; gap:10px; }
-    nav.top a { background: rgba(255,255,255,0.12); color:#fff; padding:10px 14px; border-radius:10px; font-weight:600; }
-    nav.top a:hover { background: rgba(255,255,255,0.2); }
-
+    nav.top { margin-top:16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    nav.top a, .btn-link { background: rgba(255,255,255,0.12); color:#fff; padding:10px 14px; border-radius:10px; font-weight:600; }
+    nav.top a:hover, .btn-link:hover { background: rgba(255,255,255,0.2); }
+    .auth-controls { margin-left:auto; display:flex; gap:8px; }
     .hero { background:#fff; border-radius:16px; padding:24px; box-shadow: 0 10px 30px rgba(0,0,0,.15); }
     .hero h1 { font-size:32px; color:#3b3b7a; margin-bottom:8px; }
     .hero p { color:#555; margin-bottom:16px; }
-
     .grid { margin-top:20px; display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:16px; }
     .card { background:#fff; border-radius:14px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,.08); }
-    .card h2 { font-size:18px; color:#5a63e0; margin-bottom:6px; }
+    .card h2, .card h3 { font-size:18px; color:#5a63e0; margin-bottom:6px; }
     .card p { font-size:14px; color:#555; }
-    .btn { display:inline-block; margin-top:10px; background: linear-gradient(135deg,#667eea,#764ba2); color:#fff; padding:10px 14px; border-radius:999px; font-weight:700; }
-
+    .btn { display:inline-block; margin-top:10px; background: linear-gradient(135deg,#667eea,#764ba2); color:#fff; padding:10px 14px; border-radius:999px; font-weight:700; border:none; cursor:pointer; }
+    .btn.secondary { background:#e7e8ff; color:#4a4fb0; }
     section { scroll-margin-top: 90px; }
     .muted { color:#666; font-size:14px; }
     .two-col { display:grid; grid-template-columns: 1fr; gap:16px; }
     @media (min-width: 900px){ .two-col { grid-template-columns: 1fr 1fr; } }
-
     ul.clean { list-style:none; }
     ul.clean li { padding:8px 0; border-bottom:1px solid #eee; }
     .pill { display:inline-block; background:#eef; color:#445; padding:4px 10px; border-radius:999px; font-size:12px; }
     .subnav { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 0; }
-    .subnav a { background:#f4f6ff; color:#445; padding:6px 10px; border-radius:999px; font-weight:600; }
-
     footer { color:#ddd; text-align:center; padding:28px; }
+    /* Modal */
+    .modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:1000; }
+    .modal { width:100%; max-width:420px; background:#fff; border-radius:12px; padding:18px; box-shadow:0 10px 30px rgba(0,0,0,.25); }
+    .modal h2 { color:#3b3b7a; margin-bottom:8px; }
+    .field { display:flex; flex-direction:column; gap:6px; margin-top:10px; }
+    .field input { padding:10px; border:1px solid #ddd; border-radius:8px; }
+    .row { display:flex; gap:10px; align-items:center; justify-content:space-between; }
+    .warn { background:#fff7e6; border:1px solid #ffd591; color:#663c00; padding:10px; border-radius:10px; margin-top:10px; font-size:13px; }
+    .gate { text-align:center; padding:20px; }
+    .hidden { display:none !important; }
+    .badge { font-size:12px; color:#fff; background:#4a54e1; padding:4px 8px; border-radius:999px; }
   </style>
 </head>
 <body>
@@ -53,12 +60,18 @@
         <a href="#coaching">Coaching</a>
         <a href="#profile">Profile</a>
         <a href="#plans">Training Plans</a>
+        <div class="auth-controls" id="authControls">
+          <span id="authStatus" class="badge">Logged out</span>
+          <button class="btn secondary" id="openAuth">Login / Signup</button>
+          <button class="btn hidden" id="logoutBtn">Logout</button>
+        </div>
       </nav>
     </header>
 
-    <main id="home" class="hero">
+    <main class="hero" id="home">
       <h1>Your AI-Powered Fitness Companion</h1>
-      <p>Simple anchors and placeholders are wired up for fast navigation. Click any item above to jump to its section.</p>
+      <p>Sign in to access personal data like friends, calories, workouts, and profile.</p>
+      <div class="warn">Front-end only demo: data is stored in this browser and not saved server-side.</div>
       <div class="grid">
         <div class="card">
           <h2>Get Started</h2>
@@ -83,7 +96,7 @@
       </div>
     </main>
 
-    <section id="connect" class="grid" aria-label="Connect Device">
+    <section aria-label="Connect Device" class="grid" id="connect">
       <div class="card">
         <h2>Connect Device</h2>
         <p>Placeholder integrations: Garmin, Apple Health, Fitbit, Strava, Whoop.</p>
@@ -100,16 +113,16 @@
         <h2>Permissions</h2>
         <p>Select what to sync:</p>
         <ul class="clean">
-          <li><input type="checkbox" checked> Workouts</li>
-          <li><input type="checkbox" checked> Heart rate</li>
-          <li><input type="checkbox" checked> Sleep</li>
-          <li><input type="checkbox" checked> Body metrics</li>
+          <li><input checked type="checkbox"/> Workouts</li>
+          <li><input checked type="checkbox"/> Heart rate</li>
+          <li><input checked type="checkbox"/> Sleep</li>
+          <li><input checked type="checkbox"/> Body metrics</li>
         </ul>
       </div>
     </section>
 
-    <section id="readiness" class="grid" aria-label="Training Readiness">
-      <div class="card">
+    <section aria-label="Training Readiness" class="grid" id="readiness">
+      <div class="card gated" data-section="readiness">
         <h2>Training Readiness</h2>
         <p class="muted">Example formula: HRV, sleep, acute load, and recovery score.</p>
         <ul class="clean">
@@ -118,80 +131,90 @@
           <li>Acute Load: Moderate</li>
         </ul>
       </div>
-      <div class="card">
+      <div class="card gated" data-section="readiness">
         <h2>Recommendations</h2>
         <p>Today's suggestion: Easy run 30–40 min + core 10 min.</p>
         <a class="btn" href="#coaching">Why this workout?</a>
       </div>
+      <div class="card gate" data-gate="readiness">
+        <h3>Sign in required</h3>
+        <p class="muted">Login to view your readiness metrics.</p>
+        <button class="btn open-auth-inline">Login / Signup</button>
+      </div>
     </section>
 
-    <section id="progress" class="grid" aria-label="Progress">
-      <div class="card">
+    <section aria-label="Progress" class="grid" id="progress">
+      <div class="card gated" data-section="progress">
         <h2>Progress Overview</h2>
-        <ul class="clean">
-          <li>Calories burned today: 650</li>
-          <li>Week-to-date: 3,950 kcal</li>
-          <li>Streak: 6 days</li>
+        <ul class="clean" id="progressOverview">
+          <li>Calories burned today: <span data-val="caloriesToday">0</span></li>
+          <li>Week-to-date: <span data-val="weekKcal">0</span> kcal</li>
+          <li>Streak: <span data-val="streak">0</span> days</li>
         </ul>
       </div>
-      <div class="card">
-        <h2>Recent Activity</h2>
-        <ul class="clean">
-          <li>Run — 5.1 mi • 45:10 • 520 kcal</li>
-          <li>Swim — 1,500 m • 32:05 • 310 kcal</li>
-          <li>Bike — 18.4 mi • 58:22 • 620 kcal</li>
-        </ul>
+      <div class="card gated" data-section="progress">
+        <h2>Your Recent Activity</h2>
+        <ul class="clean" id="recentActivity"></ul>
+        <div class="row">
+          <input id="newActivity" placeholder="Describe activity (e.g., Run 5k)" style="flex:1;padding:10px;border:1px solid #ddd;border-radius:8px;" />
+          <button class="btn" id="postActivityBtn">Post</button>
+        </div>
+        <p class="muted">Only available when logged in.</p>
+      </div>
+      <div class="card gate" data-gate="progress">
+        <h3>Sign in required</h3>
+        <p class="muted">Login to view your calories and activity.</p>
+        <button class="btn open-auth-inline">Login / Signup</button>
       </div>
     </section>
 
-    <section id="friends" class="hero" aria-label="Friends">
-      <h1>Friends</h1>
-      <div class="two-col">
+    <section aria-label="Friends" class="hero" id="friends">
+      <h2>Friends</h2>
+      <div class="two-col gated" data-section="friends">
         <div class="card">
-          <h2>Find/Add Friends</h2>
-          <input type="text" placeholder="Search by name or handle" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">
-          <a class="btn" href="#">Search</a>
-          <p class="muted" style="margin-top:8px;">Results appear here. Add/remove are placeholders.</p>
-          <ul class="clean">
-            <li>@alex • Weekly burn: 4,200 kcal — <a class="pill" href="#">Add</a></li>
-            <li>@jordan • Weekly burn: 3,600 kcal — <a class="pill" href="#">Add</a></li>
-          </ul>
+          <h3>Find/Add Friends</h3>
+          <input id="friendSearch" placeholder="Search by username" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;" type="text"/>
+          <button class="btn" id="friendSearchBtn">Search</button>
+          <p class="muted" style="margin-top:8px;">Results appear here. No sample users shown.</p>
+          <ul class="clean" id="searchResults"></ul>
         </div>
         <div class="card">
-          <h2>Your Friends</h2>
-          <ul class="clean">
-            <li>@sam • Today 520 kcal • Last: Run 5k</li>
-            <li>@maria • Today 410 kcal • Last: Swim 1k</li>
-            <li>@lee • Today 680 kcal • Last: Bike 25k</li>
-          </ul>
+          <h3>Your Friends</h3>
+          <ul class="clean" id="friendsList"></ul>
         </div>
+      </div>
+      <div class="card gate" data-gate="friends">
+        <h3>Sign in required</h3>
+        <p class="muted">Login to add friends and view your friends list.</p>
+        <button class="btn open-auth-inline">Login / Signup</button>
       </div>
     </section>
 
-    <section id="track-food" class="grid" aria-label="Track Food">
-      <div class="card">
+    <section aria-label="Track Food" class="grid" id="track-food">
+      <div class="card gated" data-section="food">
         <h2>Log Food</h2>
-        <input type="text" placeholder="Food name (e.g., oatmeal, 1 cup)" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">
-        <input type="number" placeholder="Calories" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:8px;">
-        <a class="btn" href="#">Add Entry</a>
-        <p class="muted" style="margin-top:8px;">Entries are non-persistent placeholders for now.</p>
+        <input id="foodName" placeholder="Food name (e.g., oatmeal, 1 cup)" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;" type="text"/>
+        <input id="foodCalories" placeholder="Calories" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:8px;" type="number"/>
+        <button class="btn" id="addFoodBtn">Add Entry</button>
+        <p class="muted" style="margin-top:8px;">Entries are stored in this browser only.</p>
       </div>
-      <div class="card">
+      <div class="card gated" data-section="food">
         <h2>Today's Intake</h2>
-        <ul class="clean">
-          <li>Breakfast: Oatmeal • 280 kcal</li>
-          <li>Snack: Greek yogurt • 120 kcal</li>
-          <li>Lunch: Chicken bowl • 640 kcal</li>
-        </ul>
-        <p><strong>Total:</strong> 1,040 kcal</p>
+        <ul class="clean" id="foodList"></ul>
+        <div>Total: <span id="foodTotal">0</span> kcal</div>
+      </div>
+      <div class="card gate" data-gate="food">
+        <h3>Sign in required</h3>
+        <p class="muted">Login to track food.</p>
+        <button class="btn open-auth-inline">Login / Signup</button>
       </div>
     </section>
 
-    <section id="coaching" class="hero" aria-label="Coaching">
-      <h1>Coaching</h1>
+    <section aria-label="Coaching" class="hero" id="coaching">
+      <h2>Coaching</h2>
       <div class="two-col">
         <div class="card">
-          <h2>Why this workout?</h2>
+          <h3>Why this workout?</h3>
           <p>Based on your readiness and recent load, an easy aerobic session builds capacity without excess fatigue.</p>
           <ul class="clean">
             <li>Target zone: Z2 (easy)</li>
@@ -200,77 +223,31 @@
           </ul>
         </div>
         <div class="card">
-          <h2>Coach Advice</h2>
+          <h3>Coach Advice</h3>
           <p>Keep cadence relaxed, nasal breathing if possible. Add 10 minutes of core stability.</p>
           <p class="muted">Long-term: build 80/20 distribution (80% easy, 20% hard).</p>
         </div>
       </div>
     </section>
 
-    <section id="profile" class="grid" aria-label="Profile">
-      <div class="card">
+    <section aria-label="Profile" class="grid" id="profile">
+      <div class="card gated" data-section="profile">
         <h2>Your Stats</h2>
         <ul class="clean">
-          <li>Daily burn: 650 kcal</li>
-          <li>Weekly burn: 4,200 kcal</li>
-          <li>Swim: 3.2 km • Bike: 86 km • Run: 18 km</li>
+          <li>Daily burn: <span data-val="caloriesToday">0</span> kcal</li>
+          <li>Weekly burn: <span data-val="weekKcal">0</span> kcal</li>
+          <li>Swim: <span data-val="swimKm">0</span> km • Bike: <span data-val="bikeKm">0</span> km • Run: <span data-val="runKm">0</span> km</li>
         </ul>
       </div>
-      <div class="card">
+      <div class="card gated" data-section="profile">
         <h2>Recent Activity</h2>
-        <ul class="clean">
-          <li>Run — 5.1 mi • 45:10 • Z2</li>
-          <li>Swim — 1,500 m • 32:05</li>
-          <li>Strength — 45 min • Full body</li>
-        </ul>
+        <ul class="clean" id="profileRecent"></ul>
+      </div>
+      <div class="card gate" data-gate="profile">
+        <h3>Sign in required</h3>
+        <p class="muted">Login to view your profile.</p>
+        <button class="btn open-auth-inline">Login / Signup</button>
       </div>
     </section>
 
-    <section id="plans" class="hero" aria-label="Training Plans">
-      <h1>Training Plans</h1>
-      <div class="grid">
-        <div class="card">
-          <h2>Strength Gain</h2>
-          <p>3–4 days/week compound lifts + accessories. Protein 1.6–2.2 g/kg.</p>
-        </div>
-        <div class="card">
-          <h2>Running</h2>
-          <p>Easy runs, weekly tempo, long run progression. Carb timing around sessions.</p>
-        </div>
-        <div class="card">
-          <h2>Ironman</h2>
-          <p>Swim, bike, run periodization. Emphasize fueling and long brick sessions.</p>
-        </div>
-        <div class="card">
-          <h2>Triathlon</h2>
-          <p>Sprint/Olympic plans with technique focus and transition practice.</p>
-        </div>
-        <div class="card">
-          <h2>Endurance</h2>
-          <p>Polarized intensity, volume emphasis, consistent recovery blocks.</p>
-        </div>
-        <div class="card">
-          <h2>Muscle Building</h2>
-          <p>Hypertrophy blocks 8–12 reps, progressive overload, surplus + protein.</p>
-        </div>
-        <div class="card">
-          <h2>Bulking</h2>
-          <p>Structured surplus + strength/hypertrophy split. Track weekly weight.</p>
-        </div>
-        <div class="card">
-          <h2>Weight Loss</h2>
-          <p>Moderate deficit, high-protein, steps target, 2–3 resistance + 2 cardio.</p>
-        </div>
-      </div>
-      <div class="card" style="margin-top:16px;">
-        <h2>Selected Plan</h2>
-        <p class="muted">Choose a plan above (placeholder). The plan overview will appear here with weekly schedule and nutrition summary.</p>
-      </div>
-    </section>
-
-    <footer>
-      © 2025 FitAI • Navigation uses internal anchors for now • v0.1
-    </footer>
-  </div>
-</body>
-</html>
+    <
