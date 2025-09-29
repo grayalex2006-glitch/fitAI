@@ -1,341 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitAI - Your AI-Powered Fitness Companion</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitAI - Your AI-Powered Fitness Companion</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#0f1226; color:#111; }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    header.app { background: linear-gradient(135deg,#667eea,#764ba2); color:#fff; border-radius:16px; padding:24px; margin:16px 0 24px; }
+    .brand { display:flex; align-items:center; gap:12px; font-weight:800; font-size:28px; }
+    nav.top { margin-top:16px; display:flex; flex-wrap:wrap; gap:10px; }
+    nav.top a { background: rgba(255,255,255,0.12); color:#fff; padding:10px 14px; border-radius:10px; font-weight:600; }
+    nav.top a:hover { background: rgba(255,255,255,0.2); }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+    .hero { background:#fff; border-radius:16px; padding:24px; box-shadow: 0 10px 30px rgba(0,0,0,.15); }
+    .hero h1 { font-size:32px; color:#3b3b7a; margin-bottom:8px; }
+    .hero p { color:#555; margin-bottom:16px; }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+    .grid { margin-top:20px; display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:16px; }
+    .card { background:#fff; border-radius:14px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,.08); }
+    .card h2 { font-size:18px; color:#5a63e0; margin-bottom:6px; }
+    .card p { font-size:14px; color:#555; }
+    .btn { display:inline-block; margin-top:10px; background: linear-gradient(135deg,#667eea,#764ba2); color:#fff; padding:10px 14px; border-radius:999px; font-weight:700; }
 
-        header {
-            text-align: center;
-            color: white;
-            margin-bottom: 40px;
-            animation: fadeInDown 1s ease;
-        }
+    section { scroll-margin-top: 90px; }
+    .muted { color:#666; font-size:14px; }
+    .two-col { display:grid; grid-template-columns: 1fr; gap:16px; }
+    @media (min-width: 900px){ .two-col { grid-template-columns: 1fr 1fr; } }
 
-        h1 {
-            font-size: 3.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
+    ul.clean { list-style:none; }
+    ul.clean li { padding:8px 0; border-bottom:1px solid #eee; }
+    .pill { display:inline-block; background:#eef; color:#445; padding:4px 10px; border-radius:999px; font-size:12px; }
+    .subnav { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 0; }
+    .subnav a { background:#f4f6ff; color:#445; padding:6px 10px; border-radius:999px; font-weight:600; }
 
-        .tagline {
-            font-size: 1.3em;
-            opacity: 0.9;
-        }
-
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            animation: fadeInUp 0.8s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        }
-
-        .card h2 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 1.8em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .icon {
-            font-size: 1.2em;
-        }
-
-        .card p {
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: bold;
-        }
-
-        .button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .features {
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            margin-bottom: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            animation: fadeIn 1.2s ease;
-        }
-
-        .features h2 {
-            color: #667eea;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-
-        .feature-item {
-            text-align: center;
-            padding: 20px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            transition: transform 0.3s ease;
-        }
-
-        .feature-item:hover {
-            transform: scale(1.05);
-        }
-
-        .feature-item h3 {
-            color: #764ba2;
-            margin: 15px 0;
-            font-size: 1.5em;
-        }
-
-        .feature-icon {
-            font-size: 3em;
-            margin-bottom: 10px;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            animation: fadeInUp 1s ease;
-        }
-
-        .stat-number {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 1.1em;
-        }
-
-        footer {
-            text-align: center;
-            color: white;
-            padding: 30px;
-            margin-top: 40px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 15px;
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5em;
-            }
-
-            .tagline {
-                font-size: 1em;
-            }
-
-            .card {
-                padding: 20px;
-            }
-
-            .features {
-                padding: 25px;
-            }
-        }
-    </style>
+    footer { color:#ddd; text-align:center; padding:28px; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🏋️ FitAI</h1>
-            <p class="tagline">Your AI-Powered Fitness Companion</p>
-        </header>
+  <div class="wrap">
+    <header class="app">
+      <div class="brand">🏋️‍♂️ FitAI</div>
+      <nav class="top">
+        <a href="#home">Home</a>
+        <a href="#connect">Connect Device</a>
+        <a href="#readiness">Training Readiness</a>
+        <a href="#progress">Progress</a>
+        <a href="#friends">Friends</a>
+        <a href="#track-food">Track Food</a>
+        <a href="#coaching">Coaching</a>
+        <a href="#profile">Profile</a>
+        <a href="#plans">Training Plans</a>
+      </nav>
+    </header>
 
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number">10K+</div>
-                <div class="stat-label">Active Users</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">50K+</div>
-                <div class="stat-label">Workouts Generated</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">95%</div>
-                <div class="stat-label">Satisfaction Rate</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">24/7</div>
-                <div class="stat-label">AI Support</div>
-            </div>
+    <main id="home" class="hero">
+      <h1>Your AI-Powered Fitness Companion</h1>
+      <p>Simple anchors and placeholders are wired up for fast navigation. Click any item above to jump to its section.</p>
+      <div class="grid">
+        <div class="card">
+          <h2>Get Started</h2>
+          <p>Begin by connecting a device and choosing a plan that matches your goals.</p>
+          <a class="btn" href="#connect">Connect a device</a>
         </div>
-
-        <div class="dashboard">
-            <div class="card">
-                <h2><span class="icon">💪</span> Personalized Workouts</h2>
-                <p>Get custom workout plans tailored to your fitness level, goals, and available equipment. Our AI analyzes your progress and adapts your routine for optimal results.</p>
-                <button class="button">Start Training</button>
-            </div>
-
-            <div class="card">
-                <h2><span class="icon">🍎</span> Nutrition Guidance</h2>
-                <p>Receive personalized meal plans and nutrition advice based on your dietary preferences, allergies, and fitness goals. Track your macros effortlessly.</p>
-                <button class="button">View Meal Plans</button>
-            </div>
-
-            <div class="card">
-                <h2><span class="icon">📊</span> Progress Tracking</h2>
-                <p>Monitor your fitness journey with detailed analytics, charts, and insights. Track weight, body measurements, strength gains, and more.</p>
-                <button class="button">View Progress</button>
-            </div>
-
-            <div class="card">
-                <h2><span class="icon">🤖</span> AI Coach</h2>
-                <p>Chat with your personal AI fitness coach 24/7. Get instant answers to your fitness questions, form corrections, and motivation when you need it.</p>
-                <button class="button">Chat Now</button>
-            </div>
-
-            <div class="card">
-                <h2><span class="icon">🎯</span> Goal Setting</h2>
-                <p>Set and achieve your fitness goals with our intelligent goal-tracking system. Whether it's weight loss, muscle gain, or improved endurance.</p>
-                <button class="button">Set Goals</button>
-            </div>
-
-            <div class="card">
-                <h2><span class="icon">👥</span> Community</h2>
-                <p>Join a supportive community of fitness enthusiasts. Share your progress, participate in challenges, and motivate each other.</p>
-                <button class="button">Join Community</button>
-            </div>
+        <div class="card">
+          <h2>Daily Snapshot</h2>
+          <p class="muted">Readiness, recent activity, and quick links to log food and check coaching notes.</p>
+          <div class="subnav">
+            <a href="#readiness">Readiness</a>
+            <a href="#progress">Progress</a>
+            <a href="#track-food">Log Food</a>
+            <a href="#coaching">Coach Notes</a>
+          </div>
         </div>
-
-        <div class="features">
-            <h2>✨ Premium Features</h2>
-            <div class="feature-grid">
-                <div class="feature-item">
-                    <div class="feature-icon">🎥</div>
-                    <h3>Video Tutorials</h3>
-                    <p>HD exercise demonstrations with form tips</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">⏱️</div>
-                    <h3>Workout Timer</h3>
-                    <p>Built-in interval and rest timers</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">🏆</div>
-                    <h3>Achievements</h3>
-                    <p>Earn badges and unlock rewards</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">📱</div>
-                    <h3>Mobile App</h3>
-                    <p>Train anywhere with our mobile apps</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">💬</div>
-                    <h3>Expert Support</h3>
-                    <p>Direct access to certified trainers</p>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">🔔</div>
-                    <h3>Smart Reminders</h3>
-                    <p>Never miss a workout with AI reminders</p>
-                </div>
-            </div>
+        <div class="card">
+          <h2>Community</h2>
+          <p>Find and add friends, compare stats, and cheer each other on.</p>
+          <a class="btn" href="#friends">Open Friends</a>
         </div>
+      </div>
+    </main>
 
-        <footer>
-            <p>&copy; 2025 FitAI. All rights reserved.</p>
-            <p>Empowering your fitness journey with artificial intelligence.</p>
-        </footer>
-    </div>
+    <section id="connect" class="grid" aria-label="Connect Device">
+      <div class="card">
+        <h2>Connect Device</h2>
+        <p>Placeholder integrations: Garmin, Apple Health, Fitbit, Strava, Whoop.</p>
+        <ul class="clean">
+          <li>Garmin — <span class="pill">Connect</span></li>
+          <li>Apple Health — <span class="pill">Connect</span></li>
+          <li>Fitbit — <span class="pill">Connect</span></li>
+          <li>Strava — <span class="pill">Connect</span></li>
+          <li>Whoop — <span class="pill">Connect</span></li>
+        </ul>
+        <p class="muted">These are placeholders. Hook up APIs later.</p>
+      </div>
+      <div class="card">
+        <h2>Permissions</h2>
+        <p>Select what to sync:</p>
+        <ul class="clean">
+          <li><input type="checkbox" checked> Workouts</li>
+          <li><input type="checkbox" checked> Heart rate</li>
+          <li><input type="checkbox" checked> Sleep</li>
+          <li><input type="checkbox" checked> Body metrics</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="readiness" class="grid" aria-label="Training Readiness">
+      <div class="card">
+        <h2>Training Readiness</h2>
+        <p class="muted">Example formula: HRV, sleep, acute load, and recovery score.</p>
+        <ul class="clean">
+          <li>Readiness score: 78/100</li>
+          <li>HRV: 55 ms • Sleep: 7h 45m</li>
+          <li>Acute Load: Moderate</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Recommendations</h2>
+        <p>Today's suggestion: Easy run 30–40 min + core 10 min.</p>
+        <a class="btn" href="#coaching">Why this workout?</a>
+      </div>
+    </section>
+
+    <section id="progress" class="grid" aria-label="Progress">
+      <div class="card">
+        <h2>Progress Overview</h2>
+        <ul class="clean">
+          <li>Calories burned today: 650</li>
+          <li>Week-to-date: 3,950 kcal</li>
+          <li>Streak: 6 days</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Recent Activity</h2>
+        <ul class="clean">
+          <li>Run — 5.1 mi • 45:10 • 520 kcal</li>
+          <li>Swim — 1,500 m • 32:05 • 310 kcal</li>
+          <li>Bike — 18.4 mi • 58:22 • 620 kcal</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="friends" class="hero" aria-label="Friends">
+      <h1>Friends</h1>
+      <div class="two-col">
+        <div class="card">
+          <h2>Find/Add Friends</h2>
+          <input type="text" placeholder="Search by name or handle" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">
+          <a class="btn" href="#">Search</a>
+          <p class="muted" style="margin-top:8px;">Results appear here. Add/remove are placeholders.</p>
+          <ul class="clean">
+            <li>@alex • Weekly burn: 4,200 kcal — <a class="pill" href="#">Add</a></li>
+            <li>@jordan • Weekly burn: 3,600 kcal — <a class="pill" href="#">Add</a></li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Your Friends</h2>
+          <ul class="clean">
+            <li>@sam • Today 520 kcal • Last: Run 5k</li>
+            <li>@maria • Today 410 kcal • Last: Swim 1k</li>
+            <li>@lee • Today 680 kcal • Last: Bike 25k</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="track-food" class="grid" aria-label="Track Food">
+      <div class="card">
+        <h2>Log Food</h2>
+        <input type="text" placeholder="Food name (e.g., oatmeal, 1 cup)" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;">
+        <input type="number" placeholder="Calories" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:8px;">
+        <a class="btn" href="#">Add Entry</a>
+        <p class="muted" style="margin-top:8px;">Entries are non-persistent placeholders for now.</p>
+      </div>
+      <div class="card">
+        <h2>Today's Intake</h2>
+        <ul class="clean">
+          <li>Breakfast: Oatmeal • 280 kcal</li>
+          <li>Snack: Greek yogurt • 120 kcal</li>
+          <li>Lunch: Chicken bowl • 640 kcal</li>
+        </ul>
+        <p><strong>Total:</strong> 1,040 kcal</p>
+      </div>
+    </section>
+
+    <section id="coaching" class="hero" aria-label="Coaching">
+      <h1>Coaching</h1>
+      <div class="two-col">
+        <div class="card">
+          <h2>Why this workout?</h2>
+          <p>Based on your readiness and recent load, an easy aerobic session builds capacity without excess fatigue.</p>
+          <ul class="clean">
+            <li>Target zone: Z2 (easy)</li>
+            <li>Focus: Aerobic base, recovery</li>
+            <li>Duration: 30–40 minutes</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Coach Advice</h2>
+          <p>Keep cadence relaxed, nasal breathing if possible. Add 10 minutes of core stability.</p>
+          <p class="muted">Long-term: build 80/20 distribution (80% easy, 20% hard).</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="profile" class="grid" aria-label="Profile">
+      <div class="card">
+        <h2>Your Stats</h2>
+        <ul class="clean">
+          <li>Daily burn: 650 kcal</li>
+          <li>Weekly burn: 4,200 kcal</li>
+          <li>Swim: 3.2 km • Bike: 86 km • Run: 18 km</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h2>Recent Activity</h2>
+        <ul class="clean">
+          <li>Run — 5.1 mi • 45:10 • Z2</li>
+          <li>Swim — 1,500 m • 32:05</li>
+          <li>Strength — 45 min • Full body</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="plans" class="hero" aria-label="Training Plans">
+      <h1>Training Plans</h1>
+      <div class="grid">
+        <div class="card">
+          <h2>Strength Gain</h2>
+          <p>3–4 days/week compound lifts + accessories. Protein 1.6–2.2 g/kg.</p>
+        </div>
+        <div class="card">
+          <h2>Running</h2>
+          <p>Easy runs, weekly tempo, long run progression. Carb timing around sessions.</p>
+        </div>
+        <div class="card">
+          <h2>Ironman</h2>
+          <p>Swim, bike, run periodization. Emphasize fueling and long brick sessions.</p>
+        </div>
+        <div class="card">
+          <h2>Triathlon</h2>
+          <p>Sprint/Olympic plans with technique focus and transition practice.</p>
+        </div>
+        <div class="card">
+          <h2>Endurance</h2>
+          <p>Polarized intensity, volume emphasis, consistent recovery blocks.</p>
+        </div>
+        <div class="card">
+          <h2>Muscle Building</h2>
+          <p>Hypertrophy blocks 8–12 reps, progressive overload, surplus + protein.</p>
+        </div>
+        <div class="card">
+          <h2>Bulking</h2>
+          <p>Structured surplus + strength/hypertrophy split. Track weekly weight.</p>
+        </div>
+        <div class="card">
+          <h2>Weight Loss</h2>
+          <p>Moderate deficit, high-protein, steps target, 2–3 resistance + 2 cardio.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <h2>Selected Plan</h2>
+        <p class="muted">Choose a plan above (placeholder). The plan overview will appear here with weekly schedule and nutrition summary.</p>
+      </div>
+    </section>
+
+    <footer>
+      © 2025 FitAI • Navigation uses internal anchors for now • v0.1
+    </footer>
+  </div>
 </body>
 </html>
